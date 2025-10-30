@@ -1,7 +1,5 @@
 package application;
 
-import model.dao.DaoFactory;
-import model.dao.SellerDao;
 import model.entities.Department;
 import model.entities.Seller;
 
