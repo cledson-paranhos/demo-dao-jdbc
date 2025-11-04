@@ -8,7 +8,7 @@ import model.entities.Seller;
 import java.util.Date;
 import java.util.List;
 
-public class Program {
+public class ProgramSeller {
     public static void main(String[] args) {
         SellerDao sellerDao = SellerFactory.createSellerDao();
 
@@ -33,5 +33,16 @@ public class Program {
         seller = new Seller(1, "Greg", "Greg@gmail.com", new Date(), 3000.00, department);
         sellerDao.insert(seller);
         System.out.println("Seller Inserting " + seller);
+
+        System.out.println("Seller Update:" );
+        seller = sellerDao.findById(1);
+        seller.setName("Marta Green");
+        seller.setEmail("MartaGreen@Gmail.com");
+        sellerDao.update(seller);
+        System.out.println("Seller Updating " + seller);
+
+        System.out.println("Seller Delete:" );
+        sellerDao.deleteById(20);
+        System.out.println("Seller deleting sucessful");
     }
 }
