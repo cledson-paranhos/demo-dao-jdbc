@@ -1,7 +1,7 @@
 package application;
 
+import model.dao.DaoFactory;
 import model.dao.DepartmentDao;
-import model.dao.DepartmentFactory;
 import model.entities.Department;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ProgramDepartment {
     public static void main(String[] args) {
-        DepartmentDao departmentDao = DepartmentFactory.createDepartmentDao();
+        DepartmentDao departmentDao = DaoFactory.createDepartmentDao();
 
         System.out.println("Department findById");
         Department department = departmentDao.findById(1);
@@ -40,6 +40,5 @@ public class ProgramDepartment {
         System.out.println("Department delete");
         departmentDao.deleteById(6);
         System.out.println("Department deleted successful");
-
     }
 }
