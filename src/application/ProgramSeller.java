@@ -43,6 +43,6 @@ public class ProgramSeller {
 
         System.out.println("Seller Delete:" );
         sellerDao.deleteById(20);
-        System.out.println("Seller deleting sucessful");
+        System.out.println("Seller deleting successful");
     }
 }

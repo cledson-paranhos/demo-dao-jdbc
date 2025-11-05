@@ -3,7 +3,6 @@ package model.dao.Impl;
 import db.DB;
 import db.DbException;
 import model.dao.DepartmentDao;
-import model.dao.DepartmentFactory;
 import model.entities.Department;
 
 import java.sql.Connection;
@@ -22,17 +21,81 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
     @Override
     public void insert(Department department) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
 
+        try {
+            connection.setAutoCommit(false);
+
+            preparedStatement = connection.prepareStatement("INSERT INTO department (Id, Name) VALUES (?, ?)",
+                    PreparedStatement.RETURN_GENERATED_KEYS);
+
+            preparedStatement.setInt(1, department.getId());
+            preparedStatement.setString(2, department.getName());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                resultSet = preparedStatement.getGeneratedKeys();
+
+                if (resultSet.next()) {
+                    department.setId(resultSet.getInt(1));
+                }
+            } else {
+                throw new DbException("Unexpeted error! No rows affected");
+            }
+            connection.commit();
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        } finally {
+            DB.closePreparedStatment(preparedStatement);
+            DB.closeResultSet(resultSet);
+        }
     }
 
     @Override
     public void update(Department department) {
+        PreparedStatement preparedStatement = null;
 
+        try {
+            preparedStatement = connection.prepareStatement(
+                    "UPDATE DEPARTMENT SET Name=? WHERE Id=?");
+
+            preparedStatement.setString(1, department.getName());
+            preparedStatement.setInt(2, department.getId());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new DbException("No department found with Id: " + department.getId());
+            }
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        } finally {
+            DB.closePreparedStatment(preparedStatement);
+        }
     }
 
     @Override
     public void deleteById(Integer id) {
+        PreparedStatement preparedStatement = null;
 
+        try {
+            preparedStatement = connection.prepareStatement(
+                    "DELETE FROM DEPARTMENT WHERE Id=?");
+
+            preparedStatement.setInt(1, id);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new DbException("No department found deleted Id: " + id);
+            }
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        } finally {
+            DB.closePreparedStatment(preparedStatement);
+        }
     }
 
     @Override
@@ -41,9 +104,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
         ResultSet resultSet = null;
 
         try {
-            preparedStatement = connection.prepareStatement(
-                    "SELECT * FROM DEPARTMENT WHERE Id = ?"
-            );
+            preparedStatement = connection.prepareStatement("SELECT * FROM DEPARTMENT WHERE Id = ?");
 
             preparedStatement.setInt(1, id);
 
@@ -68,9 +129,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
         ResultSet resultSet = null;
 
         try {
-            preparedStatement = connection.prepareStatement(
-                    "SELECT * FROM DEPARTMENT"
-            );
+            preparedStatement = connection.prepareStatement("SELECT * FROM DEPARTMENT");
 
             resultSet = preparedStatement.executeQuery();
 
